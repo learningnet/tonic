@@ -369,7 +369,15 @@ class Application
             foreach ($items[1] as $item) {
                 preg_match_all('/"[^"]+"|[^\s]+/', $item, $parts);
                 $key = array_shift($parts[0]);
-                array_walk($parts[0], create_function('&$v', '$v = trim($v, \'"\');'));
+
+                // create_function is deprecated in php7
+                #array_walk($parts[0], create_function('&$v', '$v = trim($v, \'"\');'));
+
+                $trimQuotes = function (&$value) {
+                    $value = trim($value, '"');
+                };
+
+                array_walk($parts[0], $trimQuotes);
                 $data[$key][] = $parts[0];
             }
         }
